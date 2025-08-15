@@ -1,4 +1,6 @@
 // Copy this file next to a component and rename appropriately.
+/* eslint-disable no-unused-vars */
+
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
