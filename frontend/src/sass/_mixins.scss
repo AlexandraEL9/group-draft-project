@@ -1,0 +1,47 @@
+@import './variables';  // <-- add this line
+// Different text styles
+@mixin titleText {
+    font-weight: 600;
+    font-size: 1.8rem;
+}
+
+@mixin taskNamesText {
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+@mixin paragraphText {
+    font-weight: 300;
+    font-size: 1rem;
+}
+
+@mixin buttonText {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+@mixin placeholderText {
+    font-weight: 400;
+    font-size: 0.5rem;
+}
+
+@mixin copyrightText {
+    font-weight: 500;
+    font-size: 0.7rem;
+}
+
+// Container mixin 
+@mixin container {
+    width: 70vw;
+    height: auto;
+    background-color: $cream;
+    display: flex;
+    border-radius: 50px;
+    flex-direction: column;
+    text-align: center;
+    margin: 2.5vh auto 0vh auto;
+    padding: 0vh 5vw 2vh 5vw;
+    box-sizing: border-box;
+    align-items: center;
+}
+
