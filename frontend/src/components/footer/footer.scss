@@ -1,0 +1,12 @@
+/* footer.scss */
+@import '../../sass/variables';
+@import '../../sass/mixins';
+
+.footer {
+  color: $textColor;
+  text-align: center;
+  border-top: 1px solid rgba(0,0,0,.06);
+  width: 100%;
+  padding: 12px 0;   /* nicer than fixed height */
+}
+

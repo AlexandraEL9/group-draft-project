@@ -7,20 +7,26 @@
   color: $textColor;
 }
 
-html, body {
-  background-color: $white;
+html, body, #root {
+  height: 100%;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
-/* Main div container */
-.container { @include container; }
+/* App-level wrapper becomes a column */
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-/* text styles */
+/* main grows to push footer to bottom */
+.app main {
+  flex: 1;
+}
+
+/* your existing text styles below (unchanged) */
+.container { @include container; }
 h1 { @include titleText; }
 h2 { @include taskNamesText; }
 p  { @include paragraphText; }
