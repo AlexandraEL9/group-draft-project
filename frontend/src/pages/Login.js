@@ -1,4 +1,15 @@
+// src/pages/Login.js
 import React from 'react';
-export default function Login() {
-  return <h1>Login</h1>;
+import '../index.scss';
+import LoginForm from '../components/loginForm/LoginForm';
+
+function Login() {  // <-- Capital L
+  return (
+    <section className="auth-section">
+      <LoginForm />
+    </section>
+  );
 }
+
+export default Login;
+
