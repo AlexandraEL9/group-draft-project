@@ -1,0 +1,21 @@
+@import "../../../sass/variables";
+@import "../../../sass/mixins";
+
+// Work in progress !!! (still doesnt work)
+.logout-button {
+  position: relative;
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  margin-right: 2vw;
+  cursor: pointer;
+  padding: 0.75rem;
+  line-height: 0;
+  border-radius: 5px;
+
+  img {
+    width: 28px;
+    height: auto;
+    display: block;
+  }
+}

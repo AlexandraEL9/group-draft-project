@@ -7,12 +7,14 @@ import Routines from './pages/Routines';
 import EditRoutine from './pages/EditRoutine';
 import PlayRoutine from './pages/PlayRoutine';
 import OurTeam from './pages/OurTeam';
+import Navbar from './components/navbar/navbar';
 import Footer from './components/footer/footer';
 
 export default function App() {
   return (
     <div className="app">
       <main>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -23,7 +25,6 @@ export default function App() {
           <Route path="*" element={<div style={{ padding: 24 }}>Page not found</div>} />
         </Routes>
       </main>
-
       <Footer />
     </div>
   );
