@@ -1,4 +1,12 @@
-import React from 'react';
-export default function Routines() {
-  return <h1>Routines</h1>;
+import "../index.scss";
+import RoutinesList from "../components/routine-list/RoutineList";
+
+function Routines() {
+  return (
+    <>
+      <RoutinesList />
+    </>
+  );
 }
+
+export default Routines;
