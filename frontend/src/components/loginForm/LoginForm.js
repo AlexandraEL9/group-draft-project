@@ -21,15 +21,16 @@ function LoginForm() {
     })
       .then((res) => res.json()) // parse JSON response
       .then((data) => {
-        // store what the Header/Routines need
+        // store what the Header/Routines need in localstorage
         localStorage.setItem('userId', String(data.userId));
         localStorage.setItem('username', data.username);
 
-        // Use React Router to navigate
+        // Use React Router to navigate to routines page when login successful
         navigate('/routines');
       });
   };
 
+  // rendered to the page
   return (
     <div className="auth-card">
       <h2>Log in</h2>
