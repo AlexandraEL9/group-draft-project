@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Routines from './pages/Routines';
-import AddRoutine from './pages/AddRoutine';
+import AddRoutine from "./pages/AddRoutine";
 import EditRoutine from './pages/EditRoutine';
 import PlayRoutine from './pages/PlayRoutine';
 import OurTeam from './pages/OurTeam';
@@ -20,7 +20,7 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/routines" element={<Routines />} />
-          <Route path="/routines/add" element={<AddRoutine />} />
+          <Route path="/routines/new" element={<AddRoutine />} />
           <Route path="/routines/edit/:id" element={<EditRoutine />} />
           <Route path="/routines/play/:id" element={<PlayRoutine />} />
           <Route path="/team" element={<OurTeam />} />

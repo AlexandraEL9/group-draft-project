@@ -90,7 +90,7 @@ function RoutinesList() {
       <button 
             className="btn btn--secondary" 
             // onclicking the button, use navigate to go to the add routine page with this routines routine_id
-            onClick={() => navigate(`/routines/add/`)}
+            onClick={() => navigate(`/routines/new`)}
             >
             + Add Routine
       </button>
