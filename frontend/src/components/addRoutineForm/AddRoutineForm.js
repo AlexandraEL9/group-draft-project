@@ -5,11 +5,13 @@ function AddRoutineForm() {
   const nameId = useId();
   // create fields for task objects
   const [tasks, setTasks] = useState([{ id: 1, title: "", duration: "00:30" }]);
+  const updateFirstTask = (field, value) => {
+    setTasks(prev => [{ ...prev[0], [field]: value }]);
+  };
   // Handle page submission
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ name, tasks });
-    alert("Saved (check console)");
  };
   return (
     <form onSubmit={handleSubmit}>
@@ -29,8 +31,19 @@ function AddRoutineForm() {
         <legend>Tasks</legend>
         <div>
           <span>1.</span>{" "}
-          <input type="text" placeholder="Task name" value={tasks[0].title} />{" "}
-          <input type="text" placeholder="mm:ss" value={tasks[0].duration} />{" "}
+          <input 
+            type="text" 
+            placeholder="Task name" 
+            value={tasks[0].title}
+            /*onChange- run when input changes*/
+            onChange={(event) => updateFirstTask("title", event.target.value)} 
+          />{" "}
+          <input
+            type="text"
+            placeholder="mm:ss"
+            value={tasks[0].duration}
+            onChange={(e) => updateFirstTask("duration", e.target.value)}
+          />{" "}
           <button type="button" disabled>Remove</button>
         </div>
         <button type="button" disabled>Add task</button>
