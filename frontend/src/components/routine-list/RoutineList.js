@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // used for navigation away from page
 // useState: lets us store and update component state (like the routines data)
 // useEffect: lets us run side effects (like fetching from an API) after render
 //import '../styles/RoutinesList.scss'; 
@@ -12,6 +13,9 @@ function RoutinesList() {
   // setRoutines: function to update routines state
   // Start with an empty array so .map() works even before we fetch data
   const [routines, setRoutines] = useState([]);
+
+  const navigate = useNavigate(); // use navigate within the component
+
 
   // useEffect runs after the component first renders, and whenever userId changes
   useEffect(() => {
@@ -60,17 +64,36 @@ function RoutinesList() {
             {/* Right side: Action buttons for this routine */}
             <div className="routine-card__actions">
               {/* 'Play' button — could later start this routine */}
-              <button className="btn btn--secondary">Play</button>
+              <button 
+                className="btn btn--secondary" 
+                // onclicking the button, use navigate to go to the play routine page with this routines routine_id
+                onClick={() => navigate(`/routines/play/${r.routine_id}`)}
+                >
+                Play
+              </button>
+
 
               {/* 'Edit' button — could later open a form to edit the routine */}
-              <button className="btn btn--secondary">Edit</button>
+              <button 
+                className="btn btn--secondary" 
+                // onclicking the button, use navigate to go to the edit routine page with this routines routine_id
+                onClick={() => navigate(`/routines/edit/${r.routine_id}`)}
+                >
+                Edit
+              </button>
             </div>
 
           </li>
         ))}
       </ul>
 
-      <button className="btn btn--primary">+ Add Routine</button>
+      <button 
+            className="btn btn--secondary" 
+            // onclicking the button, use navigate to go to the add routine page with this routines routine_id
+            onClick={() => navigate(`/routines/add/`)}
+            >
+            + Add Routine
+      </button>
     </section>
   );
 }
