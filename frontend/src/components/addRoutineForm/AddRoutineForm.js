@@ -1,52 +1,80 @@
-import React, { useId, useState } from "react";
+import React, { useId, useState, useRef } from "react";
 
-function AddRoutineForm() {
-  const [name, setName] = useState(""); 
-  const nameId = useId();
-  // create fields for task objects
-  const [tasks, setTasks] = useState([{ id: 1, title: "", duration: "00:30" }]);
-  const updateFirstTask = (field, value) => {
-    setTasks(prev => [{ ...prev[0], [field]: value }]);
-  };
-  // Handle page submission
-  const handleSubmit = (e) => {
+
+function AddRoutineForm({ onSave }) {
+  const uid = useId();
+
+  // Only track how many rows to render (not their values)
+  const [rows, setRows] = useState([1]);
+  const nextId = useRef(2);
+
+  const addTask = () => setRows(prev => [...prev, nextId.current++]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ name, tasks });
- };
+    const fd = new FormData(e.currentTarget);
+
+    const name = (fd.get("name") || "").toString().trim();
+
+    // Read values for each rendered row by name
+    const tasks = rows
+      .map(id => ({
+        title: (fd.get(`tasks[${id}][title]`) || "").toString().trim(),
+        duration: (fd.get(`tasks[${id}][duration]`) || "").toString().trim(),
+      }))
+      // ignore completely empty rows
+      .filter(t => t.title); // <- only keep rows with a title
+
+    const payload = { name, tasks };
+    console.log("SAVE payload:", payload);
+
+    // If you're ready to post to your API, uncomment:
+    // await fetch("/api/routines", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(payload),
+    // });
+
+    // reset the form and rows
+    e.currentTarget.reset();
+    setRows([1]);
+    nextId.current = 2;
+
+    onSave?.(payload);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor={nameId}>Routine name</label>
+        <label htmlFor={`${uid}-name`}>Routine name</label>
         <input
-          id={nameId}
+          id={`${uid}-name`}
+          name="name"
           type="text"
-          placeholder="e.g. Name your routine here..."
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g. Morning Routine"
           required
         />
       </div>
-    {/* field set, and inputs for tasks within the routine */} 
+
       <fieldset>
         <legend>Tasks</legend>
-        <div>
-          <span>1.</span>{" "}
-          <input 
-            type="text" 
-            placeholder="Task name" 
-            value={tasks[0].title}
-            /*onChange- run when input changes*/
-            onChange={(event) => updateFirstTask("title", event.target.value)} 
-          />{" "}
-          <input
-            type="text"
-            placeholder="mm:ss"
-            value={tasks[0].duration}
-            onChange={(e) => updateFirstTask("duration", e.target.value)}
-          />{" "}
-          <button type="button" disabled>Remove</button>
-        </div>
-        <button type="button" disabled>Add task</button>
+
+        {rows.map((id, idx) => (
+          <div key={id}>
+            <span>{idx + 1}.</span>{" "}
+            <input
+              name={`tasks[${id}][title]`}
+              placeholder="Task name"
+            />{" "}
+            <input
+              name={`tasks[${id}][duration]`}
+              placeholder="mm:ss"
+              defaultValue="00:30"
+            />
+          </div>
+        ))}
+
+        <button type="button" onClick={addTask}>Add task</button>
       </fieldset>
 
       <div style={{ marginTop: 16 }}>
