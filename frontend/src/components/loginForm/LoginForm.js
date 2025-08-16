@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 function LoginForm() {
   // Controlled inputs
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
 
   // Minimal submit handler: happy path only
   const handleSubmit = (e) => {
@@ -21,11 +25,9 @@ function LoginForm() {
         localStorage.setItem('userId', String(data.userId));
         localStorage.setItem('username', data.username);
 
-        // go to routines page - change to project route for project
-        window.location.href = '/routines';
+        // Use React Router to navigate
+        navigate('/routines');
       });
-
-    // (no error handling here on purpose — pure happy path)
   };
 
   return (
