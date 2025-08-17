@@ -1,6 +1,11 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-export default function PlayRoutine() {
-  const { id } = useParams();
-  return <h1>Play Routine #{id}</h1>;
+import React from "react";
+//import { useParams } from "react-router-dom";
+import RoutinePlayer from "../components/routine-player/RoutinePlayer";
+
+function PlayRoutine() {
+  return <RoutinePlayer />;
 }
+
+export default PlayRoutine
+
+
