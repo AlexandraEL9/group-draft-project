@@ -1,110 +1,86 @@
-// src/components/routine/RoutinePlayer.jsx
-import React, { useEffect, useRef, useState } from "react";
+// frontend/src/components/routine-player/PlayRoutine.jsx
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { getRoutinePlayer } from "../../api/routines";
 
-export default function RoutinePlayer() {
-  const { id: routineId } = useParams();
+export default function PlayRoutine() {
+  const { id } = useParams();
 
-  const [routineName, setRoutineName] = useState("");
-  const [tasks, setTasks] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [title, setTitle] = useState("…");
+  const [taskName, setTaskName] = useState("…");
+  const [progress, setProgress] = useState("—");
+  const [timeText, setTimeText] = useState("--:--");
+  const [nextIndex, setNextIndex] = useState("—");
+  const [nextName, setNextName] = useState("—");
 
-  const [remaining, setRemaining] = useState(0); // seconds
-  const [isRunning, setIsRunning] = useState(false);
-  const timerRef = useRef(null);
+  // NEW: next task time text
+  const [nextTime, setNextTime] = useState("--:--");
 
-  // fetch data
   useEffect(() => {
-    if (!routineId) return;
-    fetch(`http://localhost:5000/routine-player?routine_id=${routineId}`)
-      .then((res) => res.json())
-      .then((json) => {
-        setRoutineName(json?.routine?.routine_name || "");
-        setTasks(json?.tasks || []);
-        setCurrentIndex(0);
-      });
-  }, [routineId]);
+    (async () => {
+      const data = await getRoutinePlayer(Number(id));
 
-  const currentTask = tasks[currentIndex] || null;
-  const nextTask = tasks[currentIndex + 1] || null;
+      setTitle(data.routine.routine_name);
 
-  // reset timer whenever the task changes
-  useEffect(() => {
-    const mins = currentTask ? parseInt(currentTask.task_time, 10) || 0 : 0;
-    setRemaining(mins * 60);
-    setIsRunning(false);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-  }, [currentTask]);
+      const firstTask = data.tasks?.[0];
+      setTaskName(firstTask ? firstTask.task_text : "—");
 
-  // countdown + auto-advance on 0
-  useEffect(() => {
-    if (!isRunning) return;
+      const total = Array.isArray(data.tasks) ? data.tasks.length : 0;
+      setProgress(total ? `1/${total}` : "—");
 
-    const id = setInterval(() => {
-      setRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(id);
-          setIsRunning(false);
-          // move to next task if any
-          setCurrentIndex((i) => (i < tasks.length - 1 ? i + 1 : i));
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      const minutes = Number(firstTask?.task_time);
+      setTimeText(
+        Number.isFinite(minutes) && minutes >= 0
+          ? `${String(minutes).padStart(2, "0")}:00`
+          : "--:--"
+      );
 
-    return () => clearInterval(id);
-  }, [isRunning, tasks.length]);
+      const secondTask = data.tasks?.[1];
+      setNextIndex(
+        secondTask && Number.isFinite(Number(secondTask.task_order))
+          ? String(secondTask.task_order)
+          : "—"
+      );
+      setNextName(secondTask?.task_text ?? "—");
 
-  const togglePlay = () => {
-    if (remaining <= 0) return;
-    setIsRunning((r) => !r);
-  };
-
-  const skipToNext = () => {
-    setIsRunning(false);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    setCurrentIndex((i) => (i < tasks.length - 1 ? i + 1 : i));
-  };
-
-  const fmt = (secs) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m}:${String(s).padStart(2, "0")}`;
-  };
+      // NEW: format next task's time (minutes) as MM:00
+      const nextMinutes = Number(secondTask?.task_time);
+      setNextTime(
+        Number.isFinite(nextMinutes) && nextMinutes >= 0
+          ? `${String(nextMinutes).padStart(2, "0")}:00`
+          : "--:--"
+      );
+    })();
+  }, [id]);
 
   return (
-    <main>
-      <h1>{routineName || "Routine"}</h1>
+    <section className="player">
+      <h1 className="player__title">{title}</h1>
 
-      {currentTask && <h2>{currentTask.task_text}</h2>}
-
-      <section aria-label="Timer">
-        <div>Time left: {fmt(remaining)}</div>
-        <button type="button" onClick={togglePlay} disabled={remaining === 0}>
-          {isRunning ? "Pause" : "Play"}
-        </button>{" "}
-        <button type="button" onClick={skipToNext} disabled={!nextTask}>
-          Skip to Next
+      <div className="player__card">
+        <div className="player__task-name">{taskName}</div>
+        <div className="player__progress">{progress}</div>
+        <button className="player__play" type="button" disabled>
+          {timeText}
         </button>
-      </section>
+      </div>
 
-      <section aria-label="Next task">
-        <div>Next Task</div>
-        {nextTask ? (
-          <div>
-            {nextTask.task_text} — {nextTask.task_time} min
-          </div>
-        ) : (
-          <div>None</div>
-        )}
-      </section>
-    </main>
+      <button className="player__early" type="button" disabled>
+        Finished Task Early
+      </button>
+
+      <div className="player__next">
+        <div className="player__next-label">
+          {nextName === "—" ? "All tasks complete" : "Next Task"}
+        </div>
+        <div className="player__next-pill">
+          <span className="player__next-index">{nextIndex}</span>
+          <span className="player__next-name">{nextName}</span>
+          {/* NEW: dynamic next time */}
+          <span className="player__next-time">{nextTime}</span>
+        </div>
+      </div>
+    </section>
   );
 }
+

@@ -18,8 +18,8 @@ export default function LoginForm({ onSuccess }) {
   const navigate = useNavigate(); //Router hook: gives us an imperative `navigate(path, options)` function
   // so we can redirect to "/routines" after a successful login.
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(error) {
+    error.preventDefault(); //  // Stop the browser's default form submit + page reload
     setError("");
     setLoading(true);
     try {
