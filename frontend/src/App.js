@@ -9,6 +9,7 @@ import EditRoutine from './pages/EditRoutine';
 import PlayRoutine from './pages/PlayRoutine';
 import OurTeam from './pages/OurTeam';
 import Navbar from './components/navbar/navbar';
+import ApiProbe from "./components/ApiProbe";
 import Footer from './components/footer/footer';
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="*" element={<div style={{ padding: 24 }}>Page not found</div>} />
         </Routes>
       </main>
+      <ApiProbe />
       <Footer />
     </div>
   );
