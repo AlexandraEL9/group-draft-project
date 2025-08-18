@@ -1,101 +1,93 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // used for navigation away from page
-// useState: lets us store and update component state (like the routines data)
-// useEffect: lets us run side effects (like fetching from an API) after render
-//import '../styles/RoutinesList.scss'; 
+// frontend/src/components/routine-list/RoutineList.jsx
 
+// Import React and two hooks:
+// - useState: store component state (the routines array)
+// - useEffect: run side-effects (fetching data after render)
+import React, { useEffect, useState } from "react";
+
+// Import navigation hook from React Router so we can go to other pages in code
+import { useNavigate } from "react-router-dom";
+
+// Import your Axios-based API helper that calls GET /routines?user_id=...
+import { getRoutines } from "../../api/routines";
+
+// Define and export the component so it can be used elsewhere
 function RoutinesList() {
-  // Get the logged-in user's ID from localStorage
-  // localStorage always stores strings, so userId will be a string here
-  const userId = localStorage.getItem('userId');
 
-  // routines: an array of the user's routines
-  // setRoutines: function to update routines state
-  // Start with an empty array so .map() works even before we fetch data
+  // Grab the navigate() function so we can push to URLs (e.g., edit/play/new)
+  const navigate = useNavigate();
+
+  // Read the logged-in user's id (saved by Login) from localStorage (stored as a string)
+  const userId = localStorage.getItem("userId"); // set at login
+
+  // Create a piece of state to hold the routines returned from the API (start empty)
   const [routines, setRoutines] = useState([]);
 
-  const navigate = useNavigate(); // use navigate within the component
-
-
-  // useEffect runs after the component first renders, and whenever userId changes
+  // Run once on mount (and again if userId changes): fetch the user's routines
   useEffect(() => {
-    // If there's no userId in localStorage, don't bother fetching
-    if (!userId) return;
+    // Immediately-invoked async function so we can use await inside useEffect
+    (async () => {
+      // Call the API helper; backend expects a number for user_id
+      const { routines } = await getRoutines(Number(userId));
 
-    // Send a GET request to the backend API to fetch routines for this user
-    fetch(`http://localhost:5000/routines?user_id=${userId}`)
-      // When the fetch resolves, convert the HTTP response body from JSON into a JS object
-      .then(res => res.json())
+      // Save the routines array into state (fallback to [] if undefined/null)
+      setRoutines(routines ?? []);
+    })();
+  }, [userId]); // Re-run if a different userId is present (e.g., user logs out/in)
 
-      // Once we have the parsed JSON object, update state with the routines array
-      .then(json => setRoutines(json.routines || []));
-      // json.routines is expected to be an array (from our backend)
-      // If it's missing or undefined, we fallback to an empty array
-  }, [userId]); 
-  // Dependency array: only run this effect on first render and when userId changes
-
-  // JSX returned by this component
+  // JSX UI for the list page
   return (
     <section className="routines">
+      {/* Header area for the page title */}
       <div className="routines__header">
         <h1 className="routines__title">Your Routines</h1>
       </div>
 
+      {/* Unordered list that will contain one <li> per routine */}
       <ul className="routines__list">
-        {/* 
-          Map over the 'routines' state array.
-          For each routine object 'r', create one <li> element in the list.
-          'map' returns a new array of JSX elements, which React can render directly.
-        */}
-        {routines.map(r => (
-          // Each list item needs a unique key so React can track it efficiently.
-          // Here, we use r.routine_id (from the DB) because it’s unique per routine.
+        {routines.map((r) => (
+          // React needs a stable key to track items; routine_id is unique from DB
           <li key={r.routine_id} className="routine-card">
-            
-            {/* Left side: Routine name + duration */}
+            {/* Left side: routine label info */}
             <div className="routine-card__info">
-              {/* Routine name displayed as a heading */}
+              {/* Routine name as a subheading */}
               <h2>{r.routine_name}</h2>
-
-              {/* Duration displayed in minutes */}
+              {/* Routine duration in minutes */}
               <p>Duration: {r.routine_duration_minutes} mins</p>
             </div>
 
-            {/* Right side: Action buttons for this routine */}
+            {/* Right side: action buttons for this specific routine */}
             <div className="routine-card__actions">
-              {/* 'Play' button — could later start this routine */}
-              <button 
-                className="btn btn--secondary" 
-                // onclicking the button, use navigate to go to the play routine page with this routines routine_id
+              {/* Play button navigates to the routine player route with this routine's id */}
+              <button
+                className="btn btn--secondary"
                 onClick={() => navigate(`/routines/play/${r.routine_id}`)}
-                >
+              >
                 Play
               </button>
 
-
-              {/* 'Edit' button — could later open a form to edit the routine */}
-              <button 
-                className="btn btn--secondary" 
-                // onclicking the button, use navigate to go to the edit routine page with this routines routine_id
+              {/* Edit button navigates to the edit screen for this routine */}
+              <button
+                className="btn btn--secondary"
                 onClick={() => navigate(`/routines/edit/${r.routine_id}`)}
-                >
+              >
                 Edit
               </button>
             </div>
-
           </li>
         ))}
       </ul>
 
-      <button 
-            className="btn btn--secondary" 
-            // onclicking the button, use navigate to go to the add routine page with this routines routine_id
-            onClick={() => navigate(`/routines/new`)}
-            >
-            + Add Routine
+      {/* Global add button to create a brand-new routine */}
+      <button
+        className="btn btn--secondary"
+        onClick={() => navigate("/routines/new")}
+      >
+        + Add Routine
       </button>
     </section>
   );
 }
 
+// Export as default so importing files can do: import RoutinesList from './RoutineList'
 export default RoutinesList;
