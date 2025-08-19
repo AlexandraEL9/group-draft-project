@@ -1,9 +1,9 @@
 // src/pages/PlayRoutine/PlayRoutine.jsx
 import React from "react";
-import { useParams } from "react-router-dom";
+//import { useParams } from "react-router-dom";
 
 export default function PlayRoutine() {
-  const { id } = useParams();
+  //const { id } = useParams();
 
   return (
     <section className="player">
